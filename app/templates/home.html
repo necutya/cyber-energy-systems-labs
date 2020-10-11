@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="text-dark text-center">Проектування кібер-енергетичних систем</h1>
+
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Аналіз метеорологічних даних регіону</h5>
+                    <p class="card-text">
+                        Тут ви зможете побачити графіки температурних умов, тривалості температурних режимів,
+                        троянду вітрів, тривалість режимів вітрової активності, інтенсивність та тривалість
+                        режимів сонячної активності.
+                    </p>
+                    <a href="{{ url_for('main.weather') }}" class="btn btn-dark">Перейти</a>
+                </div>
+            </div>
+            </div>
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Теплотехнічні характеристики будівлі, потреба у тепловій енергії на опалення, ГВП та вентилювання</h5>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at debitis dolorum excepturi, ipsum maiores nemo nihil non officia placeat possimus quaerat quisquam quo, similique sunt? Adipisci consequatur molestiae quaerat?</p>
+
+                    <a href="#" class="btn btn-dark disabled">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Моделювання графіка електричного навантаження </h5>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at debitis dolorum excepturi, ipsum maiores nemo nihil non officia placeat possimus quaerat quisquam quo, similique sunt? Adipisci consequatur molestiae quaerat?</p>
+
+                    <a href="#" class="btn btn-dark disabled">Перейти</a>
+
+                </div>
+            </div>
+            </div>
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Визначення ефективності впровадження вітроенергетичної установки для потреб енергозабезпечення об’єкта </h5>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at debitis dolorum excepturi, ipsum maiores nemo nihil non officia placeat possimus quaerat quisquam quo, similique sunt? Adipisci consequatur molestiae quaerat?</p>
+                    <a href="#" class="btn btn-dark disabled">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Визначення ефективності впровадження повітряного теплового насосу для потреб систем опалення та кондиціонування об’єкта</h5>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at debitis dolorum excepturi, ipsum maiores nemo nihil non officia placeat possimus quaerat quisquam quo, similique sunt? Adipisci consequatur molestiae quaerat?</p>
+
+                    <a href="#" class="btn btn-dark disabled">Перейти</a>
+                </div>
+            </div>
+            </div>
+
+
+    </div>
+
+
+{% endblock %}

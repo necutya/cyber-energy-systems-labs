@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="{{dash_weather_url}}" allowfullscreen></iframe>
+    </div>
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="{{dash_weather_test}}" allowfullscreen></iframe>
+    </div>
+{% endblock %}
