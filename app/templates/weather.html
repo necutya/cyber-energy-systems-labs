@@ -1,9 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="embed-responsive embed-responsive-16by9">
+    <div class="embed-responsive embed-responsive-4by3" style="height: fit-content">
         <iframe class="embed-responsive-item" src="{{dash_weather_url}}" allowfullscreen></iframe>
     </div>
-    <div class="embed-responsive embed-responsive-16by9">
-        <iframe class="embed-responsive-item" src="{{dash_weather_test}}" allowfullscreen></iframe>
+    <hr/>
+    <div class="embed-responsive embed-responsive-4by3">
+        <iframe class="embed-responsive-item" src="{{dash_weather_mode_url}}" allowfullscreen></iframe>
     </div>
+    <hr/>
+    <div class="embed-responsive embed-responsive-4by3">
+        <iframe class="embed-responsive-item" src="{{dash_rose_url}}" allowfullscreen></iframe>
+    </div>
+    <hr/>
+    <div class="embed-responsive embed-responsive-4by3">
+        <iframe class="embed-responsive-item" src="{{dash_wind_url}}" allowfullscreen></iframe>
+    </div>
+    <hr/>
+    <div class="embed-responsive embed-responsive-4by3">
+        <iframe class="embed-responsive-item" src="{{dash_sunn_url}}" allowfullscreen></iframe>
+    </div>
+    <hr/>
+    <div class="embed-responsive embed-responsive-4by3">
+        <iframe class="embed-responsive-item" src="{{dash_sunn_activeness_url}}" allowfullscreen></iframe>
+    </div>
+
 {% endblock %}
