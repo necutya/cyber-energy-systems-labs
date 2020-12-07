@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+{#    {% include "main_form.html" %}#}
+    <div class="">
+
+     <h2 class="card-title" align="center">Вхідні дані для теплотехнічних розрахунків</h2>
+
+             <form method="post">
+                {{ form.csrf_token() }}
+
+
+                {# first block #}
+                <div class="card row mt-5 mb-3 mr-0 ml-0 p-4 bg-light">
+                    <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.q_tepl, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.s, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.n_people, class_="form-control") }}
+
+                        </div>
+                    </div>
+                    <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.T_inWater, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.T_endBak, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.T_Count_In, class_="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.T_shower, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.Q_shower_Normal, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.N_Shower, class_="form-control") }}
+                        </div>
+                    </div>
+                     <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.T_Bath, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.Q_bath_Normal, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.N_Bath, class_="form-control") }}
+                        </div>
+                    </div>
+                </div>
+
+                 {# Second block  #}
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for categoty, message in messages %}
+                            <span class="
+                                {% if categoty=="success" %}
+                                    text-success
+                                {% else %}
+                                    text-danger
+                                {% endif %}
+                            mt-1 mb-1"> {{ message }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+               {% endwith %}
+                <div class="card bg-light">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#power" role="tab" aria-controls="home" aria-selected="true">
+                                Розрахувати потужність нагрівача
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#duration" role="tab" aria-controls="profile" aria-selected="false">
+                                Розрахувати тривалість нагрівання ємності
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-2" id="myTabContent">
+                        <div class="tab-pane fade show active" id="power" role="tabpanel" aria-labelledby="home-tab">
+                            {{ wtf.form_field(form.t_heating, class_="form-control") }}
+
+                        </div>
+                        <div class="tab-pane fade" id="duration" role="tabpanel" aria-labelledby="profile-tab">
+                            {{ wtf.form_field(form.p_of_heater, class_="form-control") }}
+                        </div>
+                    </div>
+                </div>
+
+                {# third block #}
+                <div class="card row mt-5 mb-3 mr-0 ml-0 p-4 bg-light">
+                    <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.tarif_heat_energy, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.tarif_electricity_energy, class_="form-control text-danger") }}
+                        </div>
+                    </div>
+                     <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.price_of_gas, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.price_of_coal, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.price_of_wood, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.price_of_pelet, class_="form-control") }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form_item">
+                    <input type="submit" class="btn btn-dark mb-2" value="Розрахувати">
+                </div>
+
+            </form>
+        </div>
+
+{% endblock %}

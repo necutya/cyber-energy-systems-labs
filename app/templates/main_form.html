@@ -1,0 +1,36 @@
+<div class="card row mt-5 mb-3 mr-0 ml-0 p-4">
+     <h5 class="card-title" align="center">Вхідні дані для розрахунків</h5>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for categoty, message in messages %}
+                <span class="
+                    {% if categoty=="success" %}
+                        text-success
+                    {% else %}
+                        text-danger
+                    {% endif %}
+                        mt-1 mb-1"> {{ message }}
+                </span>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+         <form method="post">
+            <div class="form-group">
+                <label class="mr-sm-2 ">Виберіть місто:</label>
+                <select class="custom-select mr-sm-2" id="city" name="city">
+                    {% for city in cities%}
+                        <option {% if city["label"] == "Київ" %}selected{% endif %} value="{{ city["value"] }}"> {{ city["label"] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputDate">Виберіть початкову дату:</label>
+                <input type="datetime-local" class="form-control" name="start_date" min="{{ start_date }}" max="{{ end_date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputDate">Виберіть кінцеву дату:</label>
+                <input type="datetime-local" class="form-control" name="end_date" min="{{ start_date }}" max="{{ end_date }}" required>
+            </div>
+            <button type="submit" class="btn btn-dark">Відправити</button>
+        </form>
+    </div>

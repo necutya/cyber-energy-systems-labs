@@ -21,10 +21,12 @@ def create_app():
     df = pd.read_excel('data.xlsx')
     df_sun = pd.read_excel('solyara.xlsx')
 
+    # first part
     app = dash_weather.create_dash(server, df)
     app = dash_weather_mode.create_dash(app, df)
     app = dash_rose.create_dash(app, df)
     app = dash_wind_durations.create_dash(app, df)
     app = dash_sunn.create_dash(app, df_sun)
     app = dash_sunn_activeness.create_dash(app, df_sun)
+
     return app

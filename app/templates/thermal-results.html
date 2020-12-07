@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="text-dark text-center">Результати </h1>
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col-sm">
+                Кількість витрат горячої води
+                <div class="bg-light border rounded mt-1">{{ q_hot_water|round(3) }} м3/добу </div>
+            </div>
+
+            <div class="col-sm">
+                Тривалість нагріву ємності
+                <div class="bg-light border rounded mt-1">{{ heater_time|round(3) }} год</div>
+            </div>
+
+            <div class="col-sm">
+                Потужність нагрівача
+                <div class="bg-light border rounded mt-1">{{ heater_power|round(3) }} кВт</div>
+            </div>
+
+            <div class="col-sm">
+                Витрати енергії на опалення
+                <div class="bg-light border rounded mt-1"> {{ (w_tep_i)|round(3)}} кВт/год</div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <h3 class="text-dark text-center">Характеристика потреб будівлі у тепловій енергії на опалення</h3>
+    <h5 class="text-dark text-center">Аналітична залежність: y={{plot_line_data['k']|round(2)}}x+{{plot_line_data['b']|round(2)}}</h5>
+    <canvas id="thermal_energy" width="400" height="150"></canvas>
+
+    <hr/>
+    <h3 class="text-dark text-center">Витрати на опалення різних систем теплозбезпечення</h3>
+    <canvas id="price" width="400" height="150"></canvas>
+    <script>
+        Chart.defaults.global.defaultFontFamily = "Lato";
+        Chart.defaults.global.defaultFontSize = 14;
+
+        var ctx_thermal_energy = document.getElementById('thermal_energy').getContext('2d');
+        var thermalEnergyData = {
+            labels: [{% for x in plot_line_data['labels'] %} "{{ x }} °C", {% endfor %}],
+
+            datasets: [{
+                label: "Тепловтрата, ВТ",
+                data: [{% for y in plot_line_data['data'] %} {{ y}}, {% endfor %}],
+                fill: false,
+                borderColor: 'blue',
+            }]
+        };
+
+        var chartOptions = {
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    {#ticks: {#}
+                    {#    min: 0,#}
+                    {#    max: 20,#}
+                    {#    stepSize: 2#}
+                    {# },#}
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Тепловтрата, ВТ"
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        {#min: -30,#}
+                        {#max: 30,#}
+                        stepSize: 10
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Температура °C"
+                    }
+                }]
+            },
+        };
+        var lineChart = new Chart(ctx_thermal_energy, {
+            type: 'line',
+            data: thermalEnergyData,
+            options: chartOptions
+        });
+
+
+        var ctx_price = document.getElementById('price').getContext('2d');
+        var priceData = {
+            labels: ["Газовий котел", "Вугільний котел", "Електричний котел", "Дров'яний котел", "Крикетний котел", "Централізоване опалення"],
+            datasets: [{
+                label: "грн",
+                data: [{% for type in heating_types_prices %} {{ type }}, {% endfor %}],
+                backgroundColor: [
+                    'rgba(0, 99, 132, 0.6)',
+                    'rgba(60, 99, 132, 0.6)',
+                    'rgba(120, 99, 132, 0.6)',
+                    'rgba(180, 99, 132, 0.6)',
+                    'rgba(210, 99, 132, 0.6)',
+                    'rgba(240, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(0, 99, 132, 1)',
+                    'rgba(60, 99, 132, 1)',
+                    'rgba(120, 99, 132, 1)',
+                    'rgba(180, 99, 132, 1)',
+                    'rgba(210, 99, 132, 1)',
+                    'rgba(240, 99, 132, 1)'
+                ],
+                borderWidth: 2,
+                hoverBorderWidth: 0
+            }]
+        };
+
+        var priceChartOptions = {
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Вартість, грн"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Вид опалення"
+                    }
+                }]
+            },
+        };
+        var barChart = new Chart(ctx_price, {
+            type: 'bar',
+            data: priceData,
+            options: priceChartOptions
+        });
+
+
+    </script>
+{% endblock %}

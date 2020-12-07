@@ -2,6 +2,8 @@
 {% block content %}
     <h1 class="text-dark text-center">Проектування кібер-енергетичних систем</h1>
 
+    {% include "main_form.html" %}
+
     <div class="row mb-3">
         <div class="col-sm-6">
             <div class="card">
@@ -21,9 +23,17 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Теплотехнічні характеристики будівлі, потреба у тепловій енергії на опалення, ГВП та вентилювання</h5>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto at debitis dolorum excepturi, ipsum maiores nemo nihil non officia placeat possimus quaerat quisquam quo, similique sunt? Adipisci consequatur molestiae quaerat?</p>
+                    <p class="card-text">
+                        Тут ви хможете побачити розрахунки щодо потреби у енергії на приготування гарячої води та
+                        потужність системи ГВП, потужністі тепловтрат будівлі через огороджувальні конструкції для
+                        розрахункової температури, витрат енергії на опалення за визначений період.
+                        Побачите графік характеристики потреб будівлі у тепловій енергії на
+                        опалення для всього діапазону температур зареєстрованих протягом визначеного періоду часу та
+                        гісторграму вартості опалення та ГВП будівлі за різних умов.
 
-                    <a href="#" class="btn btn-dark disabled">Перейти</a>
+                    </p>
+
+                    <a href="{{ url_for('main.thermal_inputs') }}" class="btn btn-dark">Перейти</a>
                 </div>
             </div>
         </div>

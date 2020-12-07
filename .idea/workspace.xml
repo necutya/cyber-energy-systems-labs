@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ddc17573-5cd5-42fb-b785-bf8d6572bdcc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dash_weather/dash_rose.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dash_weather/dash_sunn_activeness.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dash_weather/dash_weather.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dash_weather/dash_weather_mode.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/solyara.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/weather.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/weather.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_weather/dash_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_weather/dash_app_1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/layout.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,17 +35,17 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/InfoTech/MIS/medstar-schedule" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab" />
-      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\app" />
-      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\dash_weather" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab" />
       <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\app\main" />
+      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\app" />
+      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\dash_weather" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab" />
       <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\app" />
       <recent name="C:\Users\artem\PycharmProjects\CyberEnergeticSystemsLab\dash_weather" />
     </key>
@@ -128,7 +122,9 @@
       <workItem from="1602513044417" duration="32514000" />
       <workItem from="1602568095074" duration="2250000" />
       <workItem from="1602769031137" duration="139000" />
-      <workItem from="1606035341970" duration="1222000" />
+      <workItem from="1606035341970" duration="41815000" />
+      <workItem from="1606119988947" duration="447000" />
+      <workItem from="1606131017533" duration="161000" />
     </task>
     <servers />
   </component>
