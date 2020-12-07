@@ -18,8 +18,11 @@ def create_app():
     from app.main.routes import main
     server.register_blueprint(main)
 
-    df = pd.read_excel('data.xlsx')
-    df_sun = pd.read_excel('solyara.xlsx')
+    # df = pd.read_excel('data.xlsx')
+    # df_sun = pd.read_excel('solyara.xlsx')
+    df = pd.read_excel('data_test.xlsx')
+    df_sun = pd.read_excel('data_test.xlsx')
+
 
     # first part
     app = dash_weather.create_dash(server, df)

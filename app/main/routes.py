@@ -119,7 +119,7 @@ def thermal_results():
     dff = DF.copy()
     dff = dff[dff['town'] == session.get('main_inputs')['city']]
     dff = dff[(session.get('main_inputs')['start_date'] < dff['dtime']) & (
-                dff['dtime'] < session.get('main_inputs')['end_date'])]
+            dff['dtime'] < session.get('main_inputs')['end_date'])]
     all_temp = dff["T"].value_counts()
     all_temp = all_temp.to_dict()
     w_tep_i = 0
@@ -145,3 +145,14 @@ def thermal_results():
         w_tep_i=w_tep_i,
         heating_types_prices=heating_types_prices
     )
+
+
+@main.route('/thermal-electric-supply-input')
+def electric_supply_input():
+    pass
+
+
+@main.route('/thermal-electric-supply')
+def electric_supply_():
+    pass
+

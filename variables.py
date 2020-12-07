@@ -1,6 +1,7 @@
 import pandas as pd
 
-DF = pd.read_excel('data.xlsx')
+DF = pd.read_excel('data_test.xlsx')
+# DF = pd.read_excel('data.xlsx')
 CITIES = [{"label": city, "value": city} for city in DF["town"].unique()]
 START_DATE = DF['dtime'][0]
 END_DATE = DF['dtime'][len(DF) - 1]
