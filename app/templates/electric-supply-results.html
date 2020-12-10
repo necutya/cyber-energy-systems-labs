@@ -1,0 +1,344 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+    {#    {% include "main_form.html" %}#}
+    <div class="container">
+        <a type="button" class="btn btn-primary" href="{{ url_for("main.electric_supply_items") }}">Перейти до списку приладів</a>
+        <br>
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for categoty, message in messages %}
+                    <div class="
+                            {% if categoty=="success" %}
+                                text-success
+                            {% else %}
+                                text-danger
+                            {% endif %}
+                        mt-1 mb-1"> {{ message }}
+                        </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+        <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="first" data-toggle="tab" href="#first-tab" role="tab">
+                    Споживання приладів
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="second" data-toggle="tab" href="#second-tab" role="tab">
+                    Електричне навантаження
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="third" data-toggle="tab" href="#third-tab" role="tab">
+                   Обсяги споживання
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="fourth" data-toggle="tab" href="#fourth-tab" role="tab">
+                   Ціна за електроенергію
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content p-2" id="myTabContent">
+            {#  first tab   #}
+            <div class="tab-pane fade show active" id="first-tab" role="tabpanel" aria-labelledby="first-tab">
+                <h3 class="card-title" align="center">Графік споживання кожного приладу</h3>
+                <div class="card bg-light">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+                        {% for key, value in days.items() %}
+                            <li class="nav-item">
+                                <a class="nav-link
+                                            {% if loop.index == 1 %}
+                                            active
+                                            {% endif %}
+                                            " id="" data-toggle="tab" href="#{{ key }}" role="tab" aria-controls="home"
+                                   aria-selected="true">
+                                    {{ key }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content p-2" id="myTabContent">
+                        {% for day, items in days.items() %}
+                            <div class="tab-pane fade show
+                                 {% if loop.index == 1 %}
+                                  active
+                                 {% endif %}
+                                 a
+                                " id="{{ day }}"
+                                 role="tabpanel">
+                                {% for item, logs in items.items() %}
+                                    <div id="chart_{{ day }}_{{ item }}" style="display: inline-block; width: calc(50% - .30rem);" class="text-center" ></div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            {# Second tab #}
+            <div class="tab-pane fade" id="second-tab" role="tabpanel" aria-labelledby="profile-tab">
+                <h3 class="card-title" align="center">Графік електричного навантаження</h3>
+                <div class="text-center mb-2">Середнє пікове навантаження на добу:
+                    <span class="bg-light border rounded mt-1 p-1">{{ avg_total_max }} Вт </span>
+                </div>
+                <div id="chart_total" class="text-center" ></div>
+                <canvas id="total2d" width="400" height="150"></canvas>
+            </div>
+
+            {# Third tab #}
+            <div class="tab-pane fade" id="third-tab" role="tabpanel" aria-labelledby="profile-tab">
+                <h3 class="card-title" align="center">Графік обсягів споживання електричної енергії для кожної доби тижня</h3>
+                <div class="text-center mb-2">Пікове навантаження за тиждень:
+                    <span class="bg-light border rounded mt-1 p-1">{{ max_energo }} Вт </span>
+                </div>
+                <div id="chart_total" class="text-center" ></div>
+                <canvas id="energo" width="400" height="150"></canvas>
+            </div>
+
+
+            {# Fourth tab #}
+            <div class="tab-pane fade" id="fourth-tab" role="tabpanel" aria-labelledby="profile-tab">
+                <h3 class="card-title" align="center">Ціна за електроенергію за різними тарифами за {{ default_date.month }}-{{ default_date.year }}</h3>
+                <div class="text-center mb-2">Згідно з витратами, найдоцільніше використовувати:
+                    <span class="bg-light border rounded mt-1 p-1">Тризонний лічильник</span>
+                </div>
+
+                <form method="post" class="col-3">
+                    <div class="form-group">
+                        <label class="mr-sm-2 ">Ціна за Вт:</label>
+                        <input class="form-control mb-1" name="price" value="{{ price }}" required>
+                        <label class="mr-sm-2 ">Місяць та рік виборки:</label>
+                        <input type="month" id="price_date" name="price_date" value="{{ default_date.year }}-{{ default_date.month }}" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-dark mb-3">Змінити</button>
+                </form>
+                <div id="chart_total" class="text-center" ></div>
+                <canvas id="counter" width="400" height="150"></canvas>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+
+        {#    First    #}
+        google.charts.load('current', {'packages': ['corechart']});
+        {% for day, items in days.items() %}
+            {% for item, logs in items.items() %}
+                google.charts.setOnLoadCallback(drawChart_{{ day }}_{{ item }});
+                function drawChart_{{ day }}_{{ item }}() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Година доби', 'Потужність Вт',],
+                        {% for log in logs %}
+                            [{{ loop.index }}, {{log}}],
+                        {% endfor %}
+                    ]);
+
+                    var options = {
+                        title: "{{item}}",
+                        width: 500,
+                        height: 300,
+                        hAxis: {
+                            title: 'Час',
+                            viewWindow: {
+                                max: 24,
+                                min: 0,
+                            },
+                            gridlines: {
+                                count: 6,
+                            }
+                        },
+                        vAxis: {
+                            title: 'Потужність',
+                            viewWindow: {
+                                max: 3000,
+                                min: 0,
+                            },
+                            gridlines: {
+                                count: 3,
+                            }
+                        },
+                        isStacked: true,
+                    };
+
+                    var chart = new google.visualization.SteppedAreaChart(document.getElementById('chart_{{ day }}_{{ item }}'));
+
+                    chart.draw(data, options);
+
+                }
+                {% endfor %}
+        {% endfor %}
+
+        {#  Second  #}
+        var ctx_total = document.getElementById('total2d').getContext('2d');
+        var totalData = {
+            labels: [
+                "Понеділок","","","","","","","","","","","","","","","","","","","","","","","",
+                "Вівторок", "","","","","","","","","","","","","","","","","","","","","","","",
+                "Середа", "","","","","","","","","","","","","","","","","","","","","","","",
+                "Четвер", "","","","","","","","","","","","","","","","","","","","","","","",
+                "П'ятниця", "","","","","","","","","","","","","","","","","","","","","","","",
+                "Субота","","","","","","","","","","","","","","","","","","","","","","","",
+                "Неділя","","","","","","","","","","","","","","","","","","","","","","","",
+            ],
+            datasets: [{
+                label: "Вт/год",
+                data: [{% for i in total %} {{ i }}, {% endfor %}],
+                backgroundColor:[
+                    {% for i in total %}
+                        {% if loop.index0 in total_max %}
+                        'rgba(255, 44, 33, 0.6)',
+                        {% else %}
+                        'rgba(0, 66, 132, 0.6)',
+                        {% endif %}
+                    {% endfor %}
+                ],
+                borderWidth: 2,
+                hoverBorderWidth: 0
+            }]
+        };
+
+        var totalChartOptions = {
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Загальна потужність, Вт"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "День неділі"
+                    }
+                }]
+            },
+        };
+        var totalChart = new Chart(ctx_total, {
+            type: 'bar',
+            data: totalData,
+            options: totalChartOptions
+        });
+
+        {# Third #}
+        var ctx_energo = document.getElementById('energo').getContext('2d');
+        var energoData = {
+            labels: [
+                "Понеділок",
+                "Вівторок",
+                "Середа",
+                "Четвер",
+                "П'ятниця",
+                "Субота",
+                "Неділя",
+            ],
+            datasets: [{
+                label: "Вт",
+                data: [{% for i in energo %} {{ i }}, {% endfor %}],
+                backgroundColor:[
+                    {% for i in total %}
+                        {% if loop.index0 == energo_max_index %}
+                        'rgba(255, 44, 33, 0.6)',
+                        {% else %}
+                        'rgba(0, 66, 132, 0.6)',
+                        {% endif %}
+                    {% endfor %}
+                ],
+                borderWidth: 2,
+                hoverBorderWidth: 0
+            }]
+        };
+
+        var energoChartOptions = {
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Потужність, Вт"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "День неділі"
+                    }
+                }]
+            },
+        };
+        var energoChart = new Chart(ctx_energo, {
+            type: 'bar',
+            data: energoData,
+            options: energoChartOptions
+        });
+
+        {# fourth #}
+        var ctx_counter = document.getElementById('counter').getContext('2d');
+        var counterData = {
+            labels: [
+                "Однозонний",
+                "Двозонний",
+                "Тризонний",
+            ],
+            datasets: [{
+                label: "грн.",
+                data: [{% for i in prices %} {{ i|round(3) }}, {% endfor %}],
+                backgroundColor:[
+                    {% for i in prices %}
+                        {% if i == min_prices %}
+                        'rgba(255, 44, 33, 0.6)',
+                        {% else %}
+                        'rgba(0, 66, 132, 0.6)',
+                        {% endif %}
+                    {% endfor %}
+                ],
+                borderWidth: 2,
+                hoverBorderWidth: 0
+            }]
+        };
+
+        var counterChartOptions = {
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Ціна, грн"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Тип лічільника"
+                    }
+                }]
+            },
+        };
+        var counterChart = new Chart(ctx_counter, {
+            type: 'bar',
+            data: counterData,
+            options: counterChartOptions
+        });
+    </script>
+
+
+{% endblock %}

@@ -1,4 +1,8 @@
 from flask import render_template, redirect, Blueprint, request, session, flash, url_for
+from datetime import datetime, timedelta, date, time
+
+from sqlalchemy import extract
+
 from variables import *
 from dash_weather import (
     dash_weather,
@@ -11,6 +15,10 @@ from dash_weather import (
 from thermal_characteristics.calculations import calc_heat_loss_capacity
 from thermal_characteristics.forms import ThermalFrom
 from thermal_characteristics import utils
+
+from app import db
+from app.main.models import User, UseTime, Item
+from electric_supply.forms import ItemForm, UseTimeForm
 
 main = Blueprint('main', __name__)
 
@@ -147,12 +155,200 @@ def thermal_results():
     )
 
 
-@main.route('/thermal-electric-supply-input')
-def electric_supply_input():
-    pass
+@main.route('/electric-supply-items', methods=["GET", "POST"])
+def electric_supply_items():
+    form = ItemForm()
+    user: int = User.query.first()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            item = Item(name=form.name.data, electric_power=form.electric_power.data, user_id=user.id)
+            db.session.add(item)
+            db.session.commit()
+            flash("Новий пристрій було додано!", 'success')
+    items = Item.query.filter_by(user_id=user.id)
+    return render_template(
+        "electric-supply-items.html", form=form, items=items
+    )
 
 
-@main.route('/thermal-electric-supply')
-def electric_supply_():
-    pass
+@main.route('/electric-supply-items/<int:item_id>/edit', methods=["GET", "POST"])
+def electric_supply_items_edit(item_id):
+    item = Item.query.get_or_404(item_id)
+    form = ItemForm()
+    user: int = User.query.first()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            item.name = form.name.data
+            item.electric_power = form.electric_power.data
+            db.session.commit()
+            flash(f"Новий пристрій {item.name} було змінено!", 'success')
+            return redirect(url_for('main.electric_supply_items'))
+    elif request.method == 'GET':
+        form.name.data = item.name
+        form.electric_power.data = item.electric_power
+    items = Item.query.filter_by(user_id=user.id)
+    return render_template(
+        "electric-supply-item-edit.html", form=form, items=items
+    )
 
+
+@main.route('/electric-supply-items/<int:item_id>/delete', methods=["GET", "POST"])
+def electric_supply_items_delete(item_id):
+    item = Item.query.get_or_404(item_id)
+    item_name = item.name
+    db.session.delete(item)
+    db.session.commit()
+    flash(f"Пристрій {item.name} було видалено!", 'success')
+    return redirect(url_for('main.electric_supply_items'))
+
+
+@main.route('/electric-supply-items/<int:item_id>/log', methods=["GET", "POST"])
+def electric_supply_items_log(item_id):
+    item = Item.query.get_or_404(item_id)
+    form = UseTimeForm()
+    last_monday = datetime.combine(date.today(), time()) - timedelta(days=date.today().weekday())
+    logged_time = UseTime.query.filter_by(item_id=item.id).order_by("start_time")
+    current_week = sorted([t for t in logged_time if t.start_time >= last_monday], key=lambda x: x.start_time)
+    if request.method == "POST":
+        if not form.start.data or not form.end.data:
+            flash("Усі поля дати повинні бути обов'язково введені", "error")
+
+        elif form.validate_on_submit():
+            obj = UseTime(start_time=form.start.data, end_time=form.end.data, item_id=item.id)
+            db.session.add(obj)
+            db.session.commit()
+            flash(f"Запис про час використання пристрою {item.name} було додано", 'success')
+
+    return render_template(
+        "electric-supply-item-log.html", form=form, logged_time=logged_time, current_week=current_week,
+        item_name=item.name
+    )
+
+
+@main.route('/electric-supply-items/<int:item_id>/log/<int:log_id>/edit', methods=["GET", "POST"])
+def electric_supply_items_log_edit(item_id, log_id):
+    log = UseTime.query.get_or_404(log_id)
+    item = Item.query.get_or_404(item_id)
+    form = UseTimeForm()
+    last_monday = datetime.combine(date.today(), time()) - timedelta(days=date.today().weekday())
+    logged_time = UseTime.query.filter_by(item_id=item.id).order_by("start_time")
+    current_week = sorted([t for t in logged_time if t.start_time >= last_monday], key=lambda x: x.start_time)
+    if request.method == "POST":
+        if not form.start.data or not form.end.data:
+            flash("Усі поля дати повинні бути обов'язково введені", "error")
+
+        elif form.validate_on_submit():
+            log.start_time = form.start.data
+            log.end_time = form.end.data
+            db.session.add(log)
+            db.session.commit()
+            flash(f"Запис про час використання пристрою {item.name} було змінено", 'success')
+            return redirect(url_for('main.electric_supply_items_log', item_id=item.id))
+
+    elif request.method == 'GET':
+        form.start.data = log.start_time
+        form.end.data = log.end_time
+
+    return render_template(
+        "electric-supply-item-log-edit.html", form=form, logged_time=logged_time, current_week=current_week,
+        item_name=item.name
+    )
+
+
+@main.route('/electric-supply-items/<int:item_id>/log/<int:log_id>/delete', methods=["GET", "POST"])
+def electric_supply_items_log_delete(item_id, log_id):
+    log = UseTime.query.get_or_404(log_id)
+    item = Item.query.get_or_404(item_id)
+    db.session.delete(log)
+    db.session.commit()
+    flash(f"Час використання пристрою  {item.name} було видалено!", 'success')
+    return redirect(url_for('main.electric_supply_items_log', item_id=item.id))
+
+
+@main.route('/electric-supply', methods=["GET", "POST"])
+def electric_supply():
+    date_price = None
+    if request.method == 'POST':
+        try:
+            price = float(request.form.get("price"))
+        except ValueError:
+            flash("Невірний тип даних", "error")
+        else:
+            if price < 0:
+                flash("Ціна не може бути менша 0", "error")
+            global PRICE
+            PRICE = price
+            flash("Ціна за кВт успішно змінена", "success")
+        date_price = request.form.get("price_date")
+        date_price = datetime.strptime(date_price, '%Y-%m')
+
+    day_names = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', "Пятниця", 'Субота', 'Неділя']
+    days = {day: dict() for day in day_names}
+    last_monday = datetime.combine(date.today(), time()) - timedelta(days=date.today().weekday())
+    logged_time = UseTime.query.order_by("start_time")
+    current_week = sorted([t for t in logged_time if t.start_time >= last_monday], key=lambda x: x.start_time)
+
+    user: int = User.query.first()
+    items = Item.query.filter_by(user_id=user.id)
+
+    for index, day in enumerate(day_names):
+        for item in items:
+            item_name = '_'.join(item.name.split(' '))
+            days[day][item_name] = [0] * 24
+        for log in current_week:
+            if log.start_time.weekday() == index:
+                for i in range(log.start_time.hour, log.end_time.hour + 1):
+                    days[day]['_'.join(log.item.name.split(' '))][i] = log.item.electric_power
+
+    total = [0] * 24 * 7
+    last_monday = datetime.combine(date.today(), time()) - timedelta(days=date.today().weekday())
+    for log in current_week:
+        for i in pd.date_range(start=log.start_time, end=log.end_time,
+                               periods=round((log.end_time - log.start_time).
+                                                     total_seconds() / 3600)).to_pydatetime().tolist():
+            total[round((i - last_monday).total_seconds() / 3600) - 1] += log.item.electric_power
+
+    total_max = []
+    energo = []
+    temp_max = 0
+    temp_max_index = 0
+    energo_temp = 0
+    for index, value in enumerate(total):
+        energo_temp += value
+        if (index + 1) % 24 == 0:
+            if temp_max_index != 0:
+                total_max.append(temp_max_index)
+            temp_max = 0
+            temp_max_index = 0
+            energo.append(energo_temp)
+            energo_temp = 0
+        if value > temp_max:
+            temp_max_index = index
+            temp_max = value
+
+    avg_total_max = round(sum(total_max) / len(total_max), 3)
+    max_energo = max(energo)
+    energo_max_index = energo.index(max_energo)
+
+    if date_price:
+        month_data = UseTime.query.filter((extract('month', UseTime.start_time) == date_price.month) &
+                                          (extract('year', UseTime.start_time) == date_price.year)).all()
+        flash(f"Місяць та рік виборки успішно зроблені ({date_price.month} - {date_price.year})", "success")
+    else:
+        month_data = UseTime.query.filter(extract('month', UseTime.start_time) == datetime.now().month).all()
+    total_electric_power = 0
+    for log in month_data:
+        for i in range(log.start_time.hour, log.end_time.hour + 1):
+            total_electric_power += log.item.electric_power
+    total_electric_power /= 1000
+    prices = [total_electric_power * PRICE, total_electric_power * PRICE * .825, total_electric_power * PRICE * .8]
+
+
+    return render_template(
+        "electric-supply-results.html",
+        price=PRICE, default_date=date_price if date_price else date.today(),
+        days=days,
+        total=total, total_max=total_max, avg_total_max=avg_total_max,
+        energo=energo, energo_max_index=energo_max_index, max_energo=max_energo,
+        prices=prices, min_prices=min(prices)
+    )

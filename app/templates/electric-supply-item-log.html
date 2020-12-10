@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+{#    {% include "main_form.html" %}#}
+    <div class="container">
+    <h2 class="card-title mb-5" align="center">Час використання приладу {{ item_name }}</h2>
+            <div class="btn-group mb-5" role="group" aria-label="Basic example">
+                    <a type="button" class="btn btn-success" href="{{ url_for("main.electric_supply") }}">Перейти до графіків</a>
+                    <a type="button" class="btn btn-primary" href="{{ url_for("main.electric_supply_items") }}">Перейти до списку приладів</a>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for categoty, message in messages %}
+                            <span class="
+                                {% if categoty=="success" %}
+                                    text-success
+                                {% else %}
+                                    text-danger
+                                {% endif %}
+                            mt-1 mb-1"> {{ message }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+
+            <div class="row">
+                <div class="col">
+                    <form method="post">
+                        {{ form.csrf_token() }}
+                        <div class="form_item">
+                            {{ wtf.form_field(form.start, class_="form-control") }}
+                        </div>
+                        <div class="form_item">
+                            {{ wtf.form_field(form.end, class_="form-control") }}
+                        </div>
+                        <small class="form-text text-muted">Ви можете записати час використання лише за останню неділю.</small>
+                        <div class="form_item">
+                            <input type="submit" class="btn btn-success mb-2" value="Додати час">
+                        </div>
+                    </form>
+                </div>
+                <div style="border-left: 1px solid rgba(0,0,0,.1); height: 250px;"></div>
+                <div class="col-8">
+                    <h4 class="text-center"> Час поточної неділі, який можна змінити</h4>
+                    <div class="row ml-3" style="max-height: 250px; overflow: scroll">
+                        <table class="table table-striped text-center" >
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Час початку використання</th>
+                                    <th scope="col">Час кінця використання</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for log in current_week %}
+                                <tr>
+                                  <th scope="row">{{ loop.index }}</th>
+                                  <td>{{log.start_time.strftime('%A %H:%m').title()}}</td>
+                                  <td>{{log.end_time.strftime('%A %H:%m').title()}}</td>
+                                  <td scope="col">
+                                    <a href="{{ url_for('main.electric_supply_items_log_edit', item_id = log.item_id, log_id=log.id) }}" class="btn btn-warning"><i class="far fa-edit"></i></a>
+                                    <a href="{{ url_for('main.electric_supply_items_log_delete', item_id = log.item_id, log_id=log.id) }}" class="btn btn-danger"><i class="fas fa-times"></i></a>
+                                  </td>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+
+                    </div>
+
+
+                </div>
+            </div>
+            <hr>
+            <h4 class="text-center mt-4"> Усі зaлоговані години</h4>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Час початку використання</th>
+                        <th scope="col">Час кінця використання</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in logged_time %}
+                    <tr>
+                      <th scope="row">{{ loop.index }}</th>
+                      <td>{{item.start_time.strftime('%d %B %Y %H:%m').title()}}</td>
+                      <td>{{item.end_time.strftime('%d %B %Y %H:%m').title()}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+{% endblock %}

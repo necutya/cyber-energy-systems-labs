@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+{#    {% include "main_form.html" %}#}
+    <div class="container">
+{#        <div class="btn-group" role="group" aria-label="Basic example">#}
+            <a type="button" class="btn btn-primary" href="{{ url_for("main.electric_supply") }}">Перейти до графіків</a>
+{#            <a type="button" class="btn btn-secondary">Middle</a>#}
+{#            <a type="button" class="btn btn-secondary">Right</a>#}
+{#        </div>#}
+
+     <h2 class="card-title" align="center">Список приладів користувача {{ items.first.full_name }}</h2>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for categoty, message in messages %}
+                            <span class="
+                                {% if categoty=="success" %}
+                                    text-success
+                                {% else %}
+                                    text-danger
+                                {% endif %}
+                            mt-1 mb-1"> {{ message }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+
+             <form method="post">
+                {{ form.csrf_token() }}
+
+                {# first block #}
+                    <div class="form-row align-items-baseline">
+                        <div class="col">
+                            {{ wtf.form_field(form.name, class_="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ wtf.form_field(form.electric_power, class_="form-control") }}
+                        </div>
+                    </div>
+                     <div class="form_item">
+                        <input type="submit" class="btn btn-dark mb-2" value="Додати">
+                     </div>
+              </form>
+
+            <hr>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Назва</th>
+                        <th scope="col">Потужність у Вт</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                      <th scope="row">{{ loop.index }}</th>
+                      <td>{{item.name}}</td>
+                      <td>{{item.electric_power}}</td>
+                      <td class="text-right">
+                          <a href="{{ url_for('main.electric_supply_items_log', item_id = item.id ) }}" class="btn btn-primary">Log time</a>
+                          <a href="{{ url_for('main.electric_supply_items_edit', item_id = item.id ) }}" class="btn btn-warning"><i class="far fa-edit"></i></a>
+                          <a href="{{ url_for('main.electric_supply_items_delete', item_id = item.id ) }}" class="btn btn-danger"><i class="fas fa-times"></i></a>
+                      </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+{% endblock %}

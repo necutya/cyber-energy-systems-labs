@@ -1,5 +1,7 @@
 from flask import Flask
 import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
+import locale
 
 from dash_weather import (
     dash_weather,
@@ -11,9 +13,15 @@ from dash_weather import (
 )
 
 
+db = SQLAlchemy()
+
 def create_app():
     server = Flask(__name__, instance_relative_config=True)
     server.config.from_object('config.DefaultConfig')
+    db.init_app(server)
+
+    # Set locale
+    locale.setlocale(locale.LC_ALL, "ukr")
     
     from app.main.routes import main
     server.register_blueprint(main)
@@ -29,7 +37,7 @@ def create_app():
     app = dash_weather_mode.create_dash(app, df)
     app = dash_rose.create_dash(app, df)
     app = dash_wind_durations.create_dash(app, df)
-    app = dash_sunn.create_dash(app, df_sun)
-    app = dash_sunn_activeness.create_dash(app, df_sun)
+    # app = dash_sunn.create_dash(app, df_sun)
+    # app = dash_sunn_activeness.create_dash(app, df_sun)
 
     return app

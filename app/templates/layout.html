@@ -19,6 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js" integrity="sha512-hZf9Qhp3rlDJBvAKvmiG+goaaKRZA6LKUO35oK6EsM0/kjPK32Yw7URqrq3Q+Nvbbt8Usss+IekL7CRn83dYmw==" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/6c2c37fab8.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
@@ -41,7 +42,7 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item " href="{{ url_for('main.thermal_inputs') }}">Теплотехнічні характеристики будівлі</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item disabled" href="#">Графік електричного навантаження</a>
+                        <a class="dropdown-item" href="{{url_for('main.electric_supply_items')}}">Графік електричного навантаження</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item disabled" href="#">Ефективність впровадження вітроенергетичної установки</a>
                         <div class="dropdown-divider"></div>
@@ -72,7 +73,7 @@
                             <a class="nav-link" href="{{ url_for('main.thermal_inputs') }}" aria-disabled="true">Теплотехнічні характеристики будівлі</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link disabled" href="#" aria-disabled="true">Електричне навантаження</a>
+                            <a class="nav-link" href="{{url_for('main.electric_supply_items')}}" aria-disabled="true">Електричне навантаження</a>
                           </li>
                         <li class="nav-item">
                             <a class="nav-link disabled" href="#" aria-disabled="true">Вітроенергетична установка</a>

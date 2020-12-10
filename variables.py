@@ -5,6 +5,7 @@ DF = pd.read_excel('data_test.xlsx')
 CITIES = [{"label": city, "value": city} for city in DF["town"].unique()]
 START_DATE = DF['dtime'][0]
 END_DATE = DF['dtime'][len(DF) - 1]
+PRICE = 2.5
 
 OUTSIDE_TEMPERATURES = {
     "Вінниця": -21,
